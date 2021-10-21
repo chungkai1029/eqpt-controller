@@ -82,15 +82,15 @@ function delay(s) {
 }
 // Make ID in Circle and Stations. 
 function textOfCircle1(num) {
-    let str1 = String(num);
-    let textCircle1 = new Two.Text(str1, 30, -150);
+    let str = String(num);
+    let textCircle1 = new Two.Text(str, 30, -150);
     textCircle1.fill = 'rgb(44, 62, 80)';
     textCircle1.size = 20;
     return textCircle1;
 }
 function textOfCircle2(num) {
-    let str2 = String(num);
-    let textCircle2 = new Two.Text(str2, -30, -150);
+    let str = String(num);
+    let textCircle2 = new Two.Text(str, -30, -150);
     textCircle2.fill = 'rgb(44, 62, 80)';
     textCircle2.size = 20;
     return textCircle2;
@@ -153,7 +153,6 @@ async function fork2Release(arm02) {
     await delay(200);
 }
 async function updateTwo(target, cassette, arm01, arm02, station) {
-    let cassetteIDNow;
     receiveCassette = cassette;
     receiveStation = station;
     // Fork action by each ID.
@@ -236,7 +235,7 @@ async function updateTwo(target, cassette, arm01, arm02, station) {
                 await fork1Release(arm01);
                 cassetteHolder[cassetteNum - 1].fill = 'rgb(46, 204, 113)';
             } else {
-                await fork1Get(cassetteIDNow);
+                await fork1Get(cassetteStatus);
                 cassetteHolder[cassetteNum - 1].fill = 'rgb(189, 195, 199)';
             }
     }
