@@ -6,8 +6,8 @@ let widthOfGroup = two.width / 2;
 let heightOfGroup = two.height / 2;
 let scaleOfGroup = 0.5;
 let perimeter = Math.PI * 2;
-var receiveCassette = [];
-var receiveStation = [];
+let receiveCassette = [];
+let receiveStation = [];
 // Make Robot, Circle and Fork.
 let robot = two.makePolygon(0, 0, 100, 6);
 let circle1 = two.makeCircle(30, -150, 30);
@@ -80,18 +80,57 @@ function delay(s) {
         setTimeout(resolve, s)
     })
 }
+// Make ID in Circle and Stations. 
+function textOfCircle1(num) {
+    let str1 = String(num);
+    let textCircle1 = new Two.Text(str1, 30, -150);
+    textCircle1.fill = 'rgb(44, 62, 80)';
+    textCircle1.size = 20;
+    return textCircle1;
+}
+function textOfCircle2(num) {
+    let str2 = String(num);
+    let textCircle2 = new Two.Text(str2, -30, -150);
+    textCircle2.fill = 'rgb(44, 62, 80)';
+    textCircle2.size = 20;
+    return textCircle2;
+}
+function textOfStation1(str) {
+    let textStation1 = new Two.Text(str, 228, -74);
+    textStation1.fill = 'rgb(44, 62, 80)';
+    textStation1.size = 20;
+    return textStation1;
+}
+function textOfStation2(str) {
+    let textStation2 = new Two.Text(str, 141, 194);
+    textStation2.fill = 'rgb(44, 62, 80)';
+    textStation2.size = 20;
+    return textStation2;
+}
+function textOfStation3(str) {
+    let textStation3 = new Two.Text(str, -141, 194);
+    textStation3.fill = 'rgb(44, 62, 80)';
+    textStation3.size = 20;
+    return textStation3;
+}
+function textOfStation4(str) {
+    let textStation4 = new Two.Text(str, -228, -74);
+    textStation4.fill = 'rgb(44, 62, 80)';
+    textStation4.size = 20;
+    return textStation4;
+}
 // Fork action function.
 async function fork1Get(arm01) {
     await delay(200);
     robotGroup.remove(circle1).add(extendFork1, extendCircle1).noStroke();
     circle1.fill = 'rgb(46, 204, 113)';
     await delay(200);
-    robotGroup.remove(extendFork1, extendCircle1).add(circle1).noStroke();
+    robotGroup.remove(extendFork1, extendCircle1).add(circle1, textOfCircle1(arm01)).noStroke();
     await delay(200);
 }
 async function fork1Release(arm01) {
     await delay(200);
-    robotGroup.remove(circle1).add(extendFork1, extendCircle1).noStroke();
+    robotGroup.remove(circle1, textOfCircle1(arm01)).add(extendFork1, extendCircle1).noStroke();
     circle1.fill = 'rgb(189, 195, 199)';
     await delay(200);
     robotGroup.remove(extendFork1, extendCircle1).add(circle1).noStroke();
@@ -102,18 +141,19 @@ async function fork2Get(arm02) {
     robotGroup.remove(circle2).add(extendFork2, extendCircle2).noStroke();
     circle2.fill = 'rgb(46, 204, 113)';
     await delay(200);
-    robotGroup.remove(extendFork2, extendCircle2).add(circle2).noStroke();
+    robotGroup.remove(extendFork2, extendCircle2).add(circle2, textOfCircle2(arm02)).noStroke();
     await delay(200);
 }
 async function fork2Release(arm02) {
     await delay(200);
-    robotGroup.remove(circle2).add(extendFork2, extendCircle2).noStroke();
+    robotGroup.remove(circle2, textOfCircle2(arm02)).add(extendFork2, extendCircle2).noStroke();
     circle2.fill = 'rgb(189, 195, 199)';
     await delay(200);
     robotGroup.remove(extendFork2, extendCircle2).add(circle2).noStroke();
     await delay(200);
 }
-async function updateTwo(target, cassette, station) {
+async function updateTwo(target, cassette, arm01, arm02, station) {
+    let cassetteIDNow;
     receiveCassette = cassette;
     receiveStation = station;
     // Fork action by each ID.
@@ -130,47 +170,59 @@ async function updateTwo(target, cassette, station) {
                     if (receiveStation[0] == '0') {
                         await fork1Release();
                         station1.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation1(arm01));
                     } else {
-                        await fork2Get();
+                        await fork2Get(receiveStation[0]);
                         station1.fill = 'rgb(189, 195, 199)';
-                        await fork1Release();
+                        stationGroup.remove(station1, textOfStation1(receiveStation[0])).add(station1);
+                        await fork1Release(arm01);
                         station1.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation1(arm01));
                     }
                     break;
                 case 2:
                     robotGroup.rotation = perimeter * 2 / 5;
                     if (receiveStation[1] == '0') {
-                        await fork2Release();
+                        await fork2Release(arm02);
                         station2.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation2(arm02));
                     } else {
-                        await fork1Get();
+                        await fork1Get(receiveStation[1]);
                         station2.fill = 'rgb(189, 195, 199)';
-                        await fork2Release();
+                        stationGroup.remove(station2, textOfStation2(receiveStation[1])).add(station2);
+                        await fork2Release(arm02);
                         station2.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation2(arm02));
                     }
                     break;
                 case 3:
                     robotGroup.rotation = perimeter * 3 / 5;
                     if (receiveStation[2] == '0') {
-                        await fork1Release();
+                        await fork1Release(arm01);
                         station3.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation3(arm01));
                     } else {
-                        await fork2Get();
+                        await fork2Get(receiveStation[2]);
                         station3.fill = 'rgb(189, 195, 199)';
-                        await fork1Release();
+                        stationGroup.remove(station3, textOfStation3(receiveStation[2])).add(station3);
+                        await fork1Release(arm01);
                         station3.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation3(arm01));
                     }
                     break;
                 case 4:
                     robotGroup.rotation = perimeter * 4 / 5;
                     if (receiveStation[3] == '0') {
-                        await fork2Release();
+                        await fork2Release(arm02);
                         station4.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation4(arm02));
                     } else {
-                        await fork1Get();
+                        await fork1Get(receiveStation[3]);
                         station4.fill = 'rgb(189, 195, 199)';
-                        await fork2Release();
+                        stationGroup.remove(station4, textOfStation4(receiveStation[3])).add(station4);
+                        await fork2Release(arm02);
                         station4.fill = 'rgb(46, 204, 113)';
+                        stationGroup.add(textOfStation4(arm02));
                     }
                     break;
             }
@@ -181,11 +233,11 @@ async function updateTwo(target, cassette, station) {
             let cassetteNum = parseInt(cassetteID);
             let cassetteStatus = receiveCassette[cassetteNum - 1];
             if (cassetteStatus == '0') {
-                await fork1Get();
-                cassetteStatus.fill = 'rgb(46, 204, 113)';
+                await fork1Release(arm01);
+                cassetteHolder[cassetteNum - 1].fill = 'rgb(46, 204, 113)';
             } else {
-                await fork1Release();
-                cassetteStatus.fill = 'rgb(189, 195, 199)';
+                await fork1Get(cassetteIDNow);
+                cassetteHolder[cassetteNum - 1].fill = 'rgb(189, 195, 199)';
             }
     }
     //switch (target) {
